@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>JhakaasCart</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f7f7f7;
+      color: #222;
+    }
+
+    header {
+      background: #111;
+      color: white;
+      padding: 18px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .cart-button {
+      background: white;
+      color: #111;
+      border: 0;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .hero {
+      background: white;
+      text-align: center;
+      padding: 55px 20px;
+    }
+
+    .hero h1 {
+      font-size: 38px;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      color: #666;
+      font-size: 17px;
+    }
+
+    .products {
+      max-width: 1100px;
+      margin: auto;
+      padding: 35px 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 22px;
+    }
+
+    .product {
+      background: white;
+      border-radius: 14px;
+      padding: 15px;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    }
+
+    .product img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      border-radius: 10px;
+      background: #eee;
+    }
+
+    .product h2 {
+      font-size: 18px;
+      margin-top: 14px;
+    }
+
+    .price {
+      font-size: 21px;
+      font-weight: bold;
+      margin: 9px 0 14px;
+    }
+
+    .add {
+      width: 100%;
+      padding: 12px;
+      background: #111;
+      color: white;
+      border: 0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .add:hover {
+      background: #333;
+    }
+
+    .cart {
+      max-width: 700px;
+      margin: 10px auto 40px;
+      background: white;
+      padding: 25px;
+      border-radius: 14px;
+    }
+
+    .cart h2 {
+      margin-bottom: 15px;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .total {
+      font-size: 21px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+
+    .checkout {
+      width: 100%;
+      padding: 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #16a34a;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      color: #777;
+    }
+
+    @media(max-width:600px) {
+      .hero h1 {
+        font-size: 30px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">JhakaasCart</div>
+
+  <button class="cart-button" onclick="goToCart()">
+    🛒 Cart (<span id="cartCount">0</span>)
+  </button>
+</header>
+
+<section class="hero">
+  <h1>Shop Your Style</h1>
+  <p>Discover products you'll love.</p>
+</section>
+
+<section class="products">
+
+  <div class="product">
+    <img src="https://placehold.co/600x600?text=Premium+T-Shirt">
+    <h2>Premium T-Shirt</h2>
+    <div class="price">₹599</div>
+    <button class="add" onclick="addToCart('Premium T-Shirt',599)">
+      Add to Cart
+    </button>
+  </div>
+
+  <div class="product">
+    <img src="https://placehold.co/600x600?text=Oversized+T-Shirt">
+    <h2>Oversized T-Shirt</h2>
+    <div class="price">₹699</div>
+    <button class="add" onclick="addToCart('Oversized T-Shirt',699)">
+      Add to Cart
+    </button>
+  </div>
+
+  <div class="product">
+    <img src="https://placehold.co/600x600?text=Graphic+T-Shirt">
+    <h2>Graphic T-Shirt</h2>
+    <div class="price">₹799</div>
+    <button class="add" onclick="addToCart('Graphic T-Shirt',799)">
+      Add to Cart
+    </button>
+  </div>
+
+</section>
+
+<section class="cart" id="cart">
+
+  <h2>🛒 Your Cart</h2>
+
+  <div id="cartItems">
+    Your cart is empty.
+  </div>
+
+  <div class="total">
+    Total: ₹<span id="total">0</span>
+  </div>
+
+  <button class="checkout" onclick="placeOrder()">
+    Place Order
+  </button>
+
+</section>
+
+<footer>
+  © 2026 JhakaasCart
+</footer>
+
+<script>
+
+let cart = [];
+let total = 0;
+
+function addToCart(name, price) {
+
+  cart.push({
+    name: name,
+    price: price
+  });
+
+  total += price;
+
+  updateCart();
+}
+
+function updateCart() {
+
+  document.getElementById("cartCount").innerText = cart.length;
+
+  document.getElementById("total").innerText = total;
+
+  const items = document.getElementById("cartItems");
+
+  if (cart.length === 0) {
+    items.innerHTML = "Your cart is empty.";
+    return;
+  }
+
+  items.innerHTML = "";
+
+  cart.forEach(function(item) {
+
+    items.innerHTML += `
+      <div class="cart-item">
+        <span>${item.name}</span>
+        <strong>₹${item.price}</strong>
+      </div>
+    `;
+
+  });
+}
+
+function goToCart() {
+
+  document.getElementById("cart").scrollIntoView({
+    behavior: "smooth"
+  });
+
+}
+
+function placeOrder() {
+
+  if (cart.length === 0) {
+    alert("Please add a product first.");
+    return;
+  }
+
+  let order = "";
+
+  cart.forEach(function(item) {
+    order += item.name + " - ₹" + item.price + "\n";
+  });
+
+  alert(
+    "Order received!\n\n" +
+    order +
+    "\nTotal: ₹" + total +
+    "\n\nPayment and delivery will be connected next."
+  );
+
+}
+
+</script>
+
+</body>
+</html>
